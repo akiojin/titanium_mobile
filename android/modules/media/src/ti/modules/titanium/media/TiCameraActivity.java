@@ -9,11 +9,13 @@ import org.appcelerator.titanium.proxy.TiViewProxy;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -21,6 +23,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Matrix;
 
 public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Callback {
 	private static final String LCAT = "TiCameraActivity";
@@ -54,11 +60,12 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 		// set overall layout - will populate in onResume
 		previewLayout = new FrameLayout(this);
 
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(previewLayout);
 	}
 
 	public void surfaceChanged(SurfaceHolder previewHolder, int format, int width, int height) {
+		setOrientation();
 		camera.startPreview();  // make sure setPreviewDisplay is called before this
 	}
 
@@ -112,6 +119,18 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 		cameraActivity = null;
 	}
 
+	protected boolean isPortrait() {
+	    return (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
+	}
+	
+	protected void setOrientation() {
+        if (isPortrait()) {
+        	camera.setDisplayOrientation(90);
+        } else {
+        	camera.setDisplayOrientation(0);
+        }
+	}
+	
 	static public void takePicture() {
 		Log.i(LCAT, "Taking picture");
 		camera.takePicture(shutterCallback, rawCallback, jpegCallback);
@@ -135,7 +154,15 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 			try {
 				// write photo to storage
 				outputStream = new FileOutputStream(cameraActivity.storageUri.getPath());
-				outputStream.write(data);
+//				if (isPortrait()) {
+					Matrix m = new Matrix();
+					m.setRotate(90);
+					Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length);
+					Bitmap c = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
+					c.compress(CompressFormat.JPEG, 100, outputStream);
+//				} else {
+//					outputStream.write(data);
+//				}
 				outputStream.close();
 
 				cameraActivity.setResult(Activity.RESULT_OK);
