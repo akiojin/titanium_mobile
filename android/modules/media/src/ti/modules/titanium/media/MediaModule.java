@@ -226,6 +226,17 @@ public class MediaModule extends KrollModule
 		activity.runOnUiThread(resultHandler);
 	}
 
+	@Kroll.method
+	public void hideCamera()
+	{
+		// カメラを閉じる
+		if (TiCameraActivity.cameraActivity != null) {
+			TiCameraActivity.hideCamera();
+		} else {
+			Log.e(LCAT, "camera preview is not open, unable to close photo");
+		}
+	}
+
 	protected class CameraResultHandler implements TiActivityResultHandler, Runnable
 	{
 		protected File imageFile;
@@ -483,7 +494,31 @@ public class MediaModule extends KrollModule
 	@Kroll.method
 	public void saveToPhotoGallery(Object object)
 	{
-		Log.w(LCAT, "saveToPhotoGallery not yet implemented in Android");
+//		KrollCallback successCallback = null;
+//		KrollCallback errorCallback = null;
+//		TiBlob image = null;
+//
+//		if (options.containsKey("success")) {
+//			successCallback = (KrollCallback) options.get("success");
+//		}
+//		if (options.containsKey("error")) {
+//			errorCallback = (KrollCallback) options.get("error");
+//		}
+//		if (options.containsKey("media")) {
+//			image = (TiBlob) options.get("media");
+//		}
+//
+//		if (image == null) {
+//			if (errorCallback != null) {
+//				errorCallback.callAsync(createErrorResponse(UNKNOWN_ERROR, "Missing image property"));
+//			}
+//		}
+//
+//		TiBaseFile f = (TiBaseFile) image.getData();
+//
+//		final KrollCallback fSuccessCallback = successCallback;
+//		final KrollCallback fErrorCallback = errorCallback;
+
 	}
 
 	KrollDict createDictForImage(String path, String mimeType) {

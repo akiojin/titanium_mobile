@@ -136,6 +136,12 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 		camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 	}
 
+	static public void hideCamera() {
+		Log.i(LCAT, "hide Camera");
+		cameraActivity.setResult(Activity.RESULT_CANCELED);
+		cameraActivity.finish();
+	}
+
 	// support user defined callback for this in the future?
 	static ShutterCallback shutterCallback = new ShutterCallback() {
 		public void onShutter() {
@@ -157,9 +163,9 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 //				if (isPortrait()) {
 					Matrix m = new Matrix();
 					m.setRotate(90);
-					Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length);
-					Bitmap c = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
-					c.compress(CompressFormat.JPEG, 100, outputStream);
+					Bitmap original = BitmapFactory.decodeByteArray(data, 0, data.length);
+					Bitmap rotated = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), m, true);
+					rotated.compress(CompressFormat.JPEG, 100, outputStream);
 //				} else {
 //					outputStream.write(data);
 //				}
