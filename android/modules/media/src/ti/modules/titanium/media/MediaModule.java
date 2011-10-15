@@ -37,6 +37,7 @@ import org.appcelerator.titanium.util.TiFileHelper;
 import org.appcelerator.titanium.util.TiIntentWrapper;
 import org.appcelerator.titanium.util.TiUIHelper;
 
+import ti.modules.titanium.filesystem.FileProxy;
 import ti.modules.titanium.media.android.AndroidModule.MediaScannerClient;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -46,6 +47,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Vibrator;
@@ -224,17 +228,6 @@ public class MediaModule extends KrollModule
 		resultHandler.activitySupport = activitySupport;
 		resultHandler.cameraIntent = cameraIntent.getIntent();
 		activity.runOnUiThread(resultHandler);
-	}
-
-	@Kroll.method
-	public void hideCamera()
-	{
-		// 繧ｫ繝｡繝ｩ繧帝哩縺倥ｋ
-		if (TiCameraActivity.cameraActivity != null) {
-			TiCameraActivity.hideCamera();
-		} else {
-			Log.e(LCAT, "camera preview is not open, unable to close photo");
-		}
 	}
 
 	protected class CameraResultHandler implements TiActivityResultHandler, Runnable
@@ -492,33 +485,90 @@ public class MediaModule extends KrollModule
 	}
 
 	@Kroll.method
-	public void saveToPhotoGallery(Object object)
+	public void saveToPhotoGallery(KrollInvocation invocation, Object media, KrollDict options)
 	{
 //		KrollCallback successCallback = null;
 //		KrollCallback errorCallback = null;
-//		TiBlob image = null;
-//
+//		
 //		if (options.containsKey("success")) {
 //			successCallback = (KrollCallback) options.get("success");
 //		}
 //		if (options.containsKey("error")) {
 //			errorCallback = (KrollCallback) options.get("error");
 //		}
-//		if (options.containsKey("media")) {
-//			image = (TiBlob) options.get("media");
-//		}
-//
-//		if (image == null) {
-//			if (errorCallback != null) {
-//				errorCallback.callAsync(createErrorResponse(UNKNOWN_ERROR, "Missing image property"));
-//			}
-//		}
-//
-//		TiBaseFile f = (TiBaseFile) image.getData();
 //
 //		final KrollCallback fSuccessCallback = successCallback;
 //		final KrollCallback fErrorCallback = errorCallback;
+		
+		if (DBG) {
+			Log.d(LCAT, "saveToPhotoGallery called");
+		}
+		
+		
+		if (media instanceof TiBlob) {
+			TiBlob blob = (TiBlob)media;
+			
+		} else if (media instanceof FileProxy) {
+			FileProxy fileProxy = (FileProxy)media;
+			TiBaseFile baseFile = fileProxy.getBaseFile();
+			
+			TiFileHelper tfh = getTiContext().getTiFileHelper();
+			File imageDir = null;
+			File imageFile = null;
+			FileOutputStream os = null;
+			
+			try {
+				//保存する画像データの設定
+				TiBlob blob = baseFile.read();
+				byte[] buf = blob.getBytes();
+				
+				//保存するURLの作成
+				String name = getTiContext().getTiApp().getAppInfo().getName();
+				imageDir = new File(PHOTO_DCIM_CAMERA, name);
+				if (!imageDir.exists()) {
+					imageDir.mkdirs();
+				}
+				imageFile = tfh.getTempFile(imageDir, ".jpg");
+				String imageUrl = "file://" + imageFile.getAbsolutePath();
+				URL url = new URL(imageUrl);
+				
+//				Log.d(LCAT, "====save file path=====");
+//				Log.d(LCAT, url.getPath());
+//				Log.d(LCAT, "=========");
+				
+				//ファイルへの書き込み
+				File f = new File(url.getPath());
+				os = new FileOutputStream(f);
 
+				Matrix m = new Matrix();
+				Bitmap b = BitmapFactory.decodeByteArray(buf, 0, buf.length);
+				Bitmap c = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
+				c.compress(CompressFormat.JPEG, 100, os);
+				
+//				os.write(buf);
+//				os.flush();
+				os.close();
+				os = null;
+				
+				//ギャラリーに対して、画像の登録
+				//これがないと、再起動するまで、ギャラリーに画像が表示されなくなる
+				Activity activity = invocation.getTiContext().getActivity();
+				ContentValues values = new ContentValues(); 
+				values.put(Images.Media.MIME_TYPE, "image/jpeg"); 
+				values.put(Images.ImageColumns.BUCKET_ID, imageFile.getPath().toLowerCase().hashCode());
+				values.put(Images.ImageColumns.BUCKET_DISPLAY_NAME, imageFile.getName());
+				values.put("_data", imageFile.getAbsolutePath());
+				activity.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+				
+//				Log.d(LCAT, "====contentResolver insert=====");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Log.d(LCAT, "===not support===");
+		}
 	}
 
 	KrollDict createDictForImage(String path, String mimeType) {
