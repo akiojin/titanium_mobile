@@ -229,6 +229,17 @@ public class MediaModule extends KrollModule
 		resultHandler.cameraIntent = cameraIntent.getIntent();
 		activity.runOnUiThread(resultHandler);
 	}
+	
+	@Kroll.method
+	public void hideCamera()
+	{
+		// ƒJƒƒ‰‚ğ•Â‚¶‚é
+		if (TiCameraActivity.cameraActivity != null) {
+			TiCameraActivity.hideCamera();
+		} else {
+			Log.e(LCAT, "camera preview is not open, unable to close photo");
+		}
+	}
 
 	protected class CameraResultHandler implements TiActivityResultHandler, Runnable
 	{
