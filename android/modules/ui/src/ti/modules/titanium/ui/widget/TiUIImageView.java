@@ -550,6 +550,8 @@ public class TiUIImageView extends TiUIView
 			return;
 		}
 		if (imageSources.size() == 1) {
+			//Log.d(LCAT, "====setImage : imageSources sixe == 1");
+			
 			if (imageViewProxy.inTableView()) {
 				Bitmap currentBitmap = imageViewProxy.getBitmap();
 				if (currentBitmap != null) {
@@ -586,12 +588,20 @@ public class TiUIImageView extends TiUIView
 					Bitmap bitmap = imageref.getBitmap(getParentView(), requestedWidth, requestedHeight);
 					if (bitmap != null) {
 						setImage(bitmap);
+						if (!firedLoad) {
+							fireLoad(TiC.PROPERTY_IMAGE);
+							firedLoad = true;
+						}
 					} else {
 						retryDecode(recycle);
 					}
 				}
 			} else {
 				setImage(imageref.getBitmap(getParentView(), requestedWidth, requestedHeight));
+				if (!firedLoad) {
+					fireLoad(TiC.PROPERTY_IMAGE);
+					firedLoad = true;
+				}
 			}
 		} else {
 			setImages();
