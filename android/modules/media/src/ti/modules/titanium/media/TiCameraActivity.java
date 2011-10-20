@@ -168,11 +168,12 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 					int heght = 428;
 					float scale_width = (float)width/original.getWidth();
 					float scale_height = (float)heght/original.getHeight();
+					float scale = Math.min(scale_width, scale_height);
 					
 					//çsóÒÇÃê›íË
 					Matrix m = new Matrix();
-					m.setScale(scale_width, scale_height);
-					m.setRotate(90);
+					m.postScale(scale_width, scale_height, 0, 0);
+					m.postRotate(90);
 					
 					Bitmap rotated = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), m, true);
 					rotated.compress(CompressFormat.JPEG, 100, outputStream);
