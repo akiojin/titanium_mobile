@@ -161,9 +161,19 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 				// write photo to storage
 				outputStream = new FileOutputStream(cameraActivity.storageUri.getPath());
 //				if (isPortrait()) {
-					Matrix m = new Matrix();
-					m.setRotate(90);
 					Bitmap original = BitmapFactory.decodeByteArray(data, 0, data.length);
+					
+					//èkè¨
+					int width = 320;
+					int heght = 428;
+					float scale_width = (float)width/original.getWidth();
+					float scale_height = (float)heght/original.getHeight();
+					
+					//çsóÒÇÃê›íË
+					Matrix m = new Matrix();
+					m.setScale(scale_width, scale_height);
+					m.setRotate(90);
+					
 					Bitmap rotated = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), m, true);
 					rotated.compress(CompressFormat.JPEG, 100, outputStream);
 //				} else {
