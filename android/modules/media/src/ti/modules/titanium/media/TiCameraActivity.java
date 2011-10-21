@@ -81,9 +81,9 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 //			Log.i(LCAT, "====size :" + size.width + " : " + size.height);
 //		}
 //		
-//		cameraParams.setPreviewSize(previewSize.width, previewSize.height );
-		cameraParams.setPreviewSize(640, 480);
-		cameraParams.setPictureSize(640, 480);
+		cameraParams.setPreviewSize(previewSize.width, previewSize.height );
+//		cameraParams.setPreviewSize(640, 480);
+//		cameraParams.setPictureSize(640, 480);
 		camera.setParameters(cameraParams);
 
 		try {
