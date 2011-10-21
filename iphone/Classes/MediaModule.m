@@ -1135,10 +1135,22 @@ if (![TiUtils isIOS4OrGreater]) { \
 		}
 		else
 		{
-			NSLog(@"[INFO] imagePickerController: Use original image.");
+			NSLog(@"[INFO] imagePickerController: Use edited image.");
 			
-			UIImage *image = [editingInfo objectForKey:UIImagePickerControllerOriginalImage];
-			media = [[[TiBlob alloc] initWithImage:image] autorelease];
+		    UIImage *image = [editingInfo objectForKey:UIImagePickerControllerOriginalImage];
+			
+			// 画像縮小
+			UIGraphicsBeinImageContext(CGSizeMake(360, 480));
+			[image drawInRect:CGRectMake(0, 0, 360, 480)];
+			image = UIGraphicsGetImageFromConrrentImageContext();
+			UIGraphicsEndImageContext();
+			
+			// トリミング
+			CGRect rect = CGRectMake(20, 0, 320, 480);
+			CGImageRef cgImage = CGImageCreateWithImageInRect(image.CGImage, rect);
+			UIImage *newImage = [UIImage imageWithCGImage:cgImage];
+			
+			media = [[[TiBlob alloc] initWithImage:newImage] autorelease];
 			if (saveToRoll)
 			{
 				UIImageWriteToSavedPhotosAlbum(image, nil, nil, NULL);
