@@ -1140,15 +1140,15 @@ if (![TiUtils isIOS4OrGreater]) { \
 		    UIImage *image = [editingInfo objectForKey:UIImagePickerControllerOriginalImage];
 			
 			// 画像縮小
-			UIGraphicsBeinImageContext(CGSizeMake(360, 480));
+			UIGraphicsBeginImageContext(CGSizeMake(360, 480));
 			[image drawInRect:CGRectMake(0, 0, 360, 480)];
-			image = UIGraphicsGetImageFromConrrentImageContext();
+			UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
 			UIGraphicsEndImageContext();
 			
 			// トリミング
 			CGRect rect = CGRectMake(20, 0, 320, 480);
-			CGImageRef cgImage = CGImageCreateWithImageInRect(image.CGImage, rect);
-			UIImage *newImage = [UIImage imageWithCGImage:cgImage];
+			CGImageRef cgImage = CGImageCreateWithImageInRect(newImage.CGImage, rect);
+			newImage = [UIImage imageWithCGImage:cgImage];
 			
 			media = [[[TiBlob alloc] initWithImage:newImage] autorelease];
 			if (saveToRoll)
