@@ -75,7 +75,15 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 		// using default preview size may be causing problem on some devices, setting dimensions manually
 		Parameters cameraParams = camera.getParameters();
 		Camera.Size previewSize = cameraParams.getSupportedPreviewSizes().get((cameraParams.getSupportedPreviewSizes().size()) - 1);
-		cameraParams.setPreviewSize(previewSize.width, previewSize.height );
+		
+//		for (int i = 0; i < cameraParams.getSupportedPreviewSizes().size()-1; ++i) {
+//			Camera.Size size = cameraParams.getSupportedPreviewSizes().get(i);
+//			Log.i(LCAT, "====size :" + size.width + " : " + size.height);
+//		}
+//		
+//		cameraParams.setPreviewSize(previewSize.width, previewSize.height );
+		cameraParams.setPreviewSize(640, 480);
+		cameraParams.setPictureSize(640, 480);
 		camera.setParameters(cameraParams);
 
 		try {
@@ -163,20 +171,24 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 //				if (isPortrait()) {
 					Bitmap original = BitmapFactory.decodeByteArray(data, 0, data.length);
 					
-					//縮小
-					int width = 320;
-					int heght = 428;
-					float scale_width = (float)width/original.getWidth();
-					float scale_height = (float)heght/original.getHeight();
-					float scale = Math.min(scale_width, scale_height);
+					//640x480(よこxたて)の画像データを編集する
+//					Log.i(LCAT, "====size :" + original.getWidth() + " : " + original.getHeight());
+					//縮小：480x320(よこxたて)にしたい
+					//この縮小では縦を480にするが、この時点では
+					//横が360となる。
+					//320のサイズにするために、後で両サイドを20ピクセルずつトリミングする
+					int width = 480;
+					float scale = (float)width/original.getWidth();
 					
 					//行列の設定
 					Matrix m = new Matrix();
-					m.postScale(scale_width, scale_height, 0, 0);
+					m.postScale(scale, scale, 0, 0);
 					m.postRotate(90);
-					
+					//回転と縮小
 					Bitmap rotated = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), m, true);
-					rotated.compress(CompressFormat.JPEG, 100, outputStream);
+					//トリミング
+					Bitmap trimming = Bitmap.createBitmap(rotated, 20, 0, 320, rotated.getHeight());
+					trimming.compress(CompressFormat.JPEG, 100, outputStream);
 //				} else {
 //					outputStream.write(data);
 //				}
