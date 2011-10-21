@@ -1140,13 +1140,13 @@ if (![TiUtils isIOS4OrGreater]) { \
 		    UIImage *image = [editingInfo objectForKey:UIImagePickerControllerOriginalImage];
 			
 			// 画像縮小
-			UIGraphicsBeginImageContext(CGSizeMake(360, 480));
-			[image drawInRect:CGRectMake(0, 0, 360, 480)];
+			UIGraphicsBeginImageContext(CGSizeMake(388, 520));
+			[image drawInRect:CGRectMake(0, 0, 388, 520)];
 			UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
 			UIGraphicsEndImageContext();
 			
 			// トリミング
-			CGRect rect = CGRectMake(20, 0, 320, 480);
+			CGRect rect = CGRectMake(34, 40, 320, 480);
 			CGImageRef cgImage = CGImageCreateWithImageInRect(newImage.CGImage, rect);
 			newImage = [UIImage imageWithCGImage:cgImage];
 			
