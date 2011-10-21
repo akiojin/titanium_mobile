@@ -34,10 +34,10 @@
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_0
 	#define CAMERA_TRANSFORM_Y 1.23
-	#define CAMERA_TRANSFORM_X 1
+	#define CAMERA_TRANSFORM_X 1.23
 #else
 	#define CAMERA_TRANSFORM_X 1.2
-	#define CAMERA_TRANSFORM_Y 1.12412
+	#define CAMERA_TRANSFORM_Y 1.2
 #endif
 
 enum  
@@ -1082,6 +1082,8 @@ if (![TiUtils isIOS4OrGreater]) { \
 
 - (void)imagePickerController:(UIImagePickerController *)picker_ didFinishPickingMediaWithInfo:(NSDictionary *)editingInfo
 {
+	NSLog(@"[INFO] imagePickerController::didFinishPickingMediaWithInfo");
+	
 	if (autoHidePicker)
 	{
 		[self closeModalPicker:picker];
@@ -1119,6 +1121,8 @@ if (![TiUtils isIOS4OrGreater]) { \
 		UIImage *editedImage = [editingInfo objectForKey:UIImagePickerControllerEditedImage];
 		if ((mediaURL!=nil) && (editedImage == nil))
 		{
+			NSLog(@"[INFO] imagePickerController: Use original image.");
+			
 			// this is a video, get the path to the URL
 			media = [[[TiBlob alloc] initWithFile:[mediaURL path]] autorelease];
 			[media setMimeType:@"image/jpeg" type:TiBlobTypeFile];
@@ -1131,8 +1135,9 @@ if (![TiUtils isIOS4OrGreater]) { \
 		}
 		else
 		{
-			UIImage *image = (editedImage != nil)?editedImage:
-					[editingInfo objectForKey:UIImagePickerControllerOriginalImage];
+			NSLog(@"[INFO] imagePickerController: Use original image.");
+			
+			UIImage *image = [editingInfo objectForKey:UIImagePickerControllerOriginalImage];
 			media = [[[TiBlob alloc] initWithImage:image] autorelease];
 			if (saveToRoll)
 			{
