@@ -99,7 +99,12 @@ static BOOL alertShowing = NO;
 
 -(void)suspended:(NSNotification*)note
 {
-	[self hide:[NSDictionary dictionaryWithObject:NUMBOOL(NO) forKey:@"animated"]];
+    // HOMEボタン押下時にこの行が有効になっていると、
+    // アラートダイアログが非表示になってしまうので無効にする。
+    // TODO:
+    // ただし、何故この実装が必要であったかは確認できていないので、
+    // 他の箇所で弊害が発生する可能性はある。
+//	[self hide:[NSDictionary dictionaryWithObject:NUMBOOL(NO) forKey:@"animated"]];
 }
 
 #pragma mark AlertView Delegate
