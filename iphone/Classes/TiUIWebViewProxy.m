@@ -125,6 +125,12 @@ USE_VIEW_FOR_AUTO_WIDTH
 	[[self view] performSelectorOnMainThread:@selector(setBasicAuthentication:) withObject:args waitUntilDone:NO];
 }
 
+-(void)clearDomainCookie:(id)domain
+{
+    ENSURE_SINGLE_ARG(domain, NSString);
+    [[self view] performSelectorOnMainThread:@selector(clearDomainCookie:) withObject:[NSArray arrayWithObjects:domain, nil] waitUntilDone:NO];
+}
+
 -(void)repaint:(id)unused
 {
 	[self contentsWillChange];

@@ -560,7 +560,30 @@ NSString * const kTitaniumJavascript = @"Ti.App={};Ti.API={};Ti.App._listeners={
 	free(base64Result);
 }
 
-
+-(void)clearDomainCookie:(NSString *)domain
+{
+	NSLog(@"TiUIWebView::clearDomainCookie: %@", domain);
+	
+    // 共通クッキーストレージを取得
+    NSHTTPCookieStorage * storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    NSArray * cookies = [storage cookies];
+    
+    // 特定のドメインのみのクッキーを削除
+    for (NSHTTPCookie * cookie in cookies) {
+        NSDictionary * prop = [cookie properties];
+        NSString * cookieDomain = [prop objectForKey:NSHTTPCookieDomain];
+		
+        NSLog(@"Domain: %@", cookieDomain);
+		if (cookieDomain && [cookieDomain isEqualToString:domain]) {
+			// 無効なクッキーへ入れ替え(deleteCookieのみだとキャッシュが残る)
+			[prop setValue:@"" forKey:NSHTTPCookieValue];
+			NSHTTPCookie * newCookie = [[NSHTTPCookie alloc] initWithProperties:prop];
+			[storage deleteCookie:cookie];
+			[storage setCookie:newCookie];
+			[newCookie release];
+		}
+    }
+}
 
 -(void)evalJS:(NSArray*)args
 {
