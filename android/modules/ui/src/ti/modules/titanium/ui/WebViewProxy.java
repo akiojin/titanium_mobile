@@ -126,6 +126,9 @@ public class WebViewProxy extends ViewProxy
 		// if it's not there.
 		// So we're just overriding and not calling super.
 	}
-
-
+	
+	@Kroll.method
+	public void clearDomainCookie(String domain) {
+		getWebView().clearDomainCookie(domain);
+	}
 }
