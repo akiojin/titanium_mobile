@@ -341,18 +341,18 @@ public class TiUIWebView extends TiUIView {
 		getWebView().clearFormData();
 		getWebView().clearHistory();
 		
-		Log.d(LCAT, "====clearDomainCookie : url : " + getUrl());
-		Log.d(LCAT, "====");
+//		Log.d(LCAT, "====clearDomainCookie : url : " + getUrl());
+//		Log.d(LCAT, "====");
 		CookieManager cookieManager = CookieManager.getInstance();
 		if (domain.equals("http://mixi.jp/")) {
-			Log.d(LCAT, "====clearDomainCookie : domain : " + domain);
-			Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
+//			Log.d(LCAT, "====clearDomainCookie : domain : " + domain);
+//			Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
 			
 			cookieManager.setCookie(domain, "session=;");
 			cookieManager.setCookie(domain, "stamp=;");
 		} else {
-			Log.d(LCAT, "====clearDomainCookie : domain : " + domain);
-			Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
+//			Log.d(LCAT, "====clearDomainCookie : domain : " + domain);
+//			Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
 			
 			cookieManager.setCookie(domain, "original_referer=;");
 			cookieManager.setCookie(domain, "__utma=;");
@@ -361,12 +361,13 @@ public class TiUIWebView extends TiUIView {
 			cookieManager.setCookie(domain, "__utmv=;");
 			cookieManager.setCookie(domain, "__utmz=;");
 			cookieManager.setCookie(domain, "_twitter_sess=;");
+			cookieManager.setCookie(domain, "auth_token=;");
 			cookieManager.setCookie(domain, "guest_id=;");
 			cookieManager.setCookie(domain, "k=;");
 			cookieManager.setCookie(domain, "secure_session=;");
 			cookieManager.setCookie(domain, "twid=;");
 			cookieManager.setCookie(domain, "twll=;");
 		}
-		Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
+//		Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
 	}
 }
