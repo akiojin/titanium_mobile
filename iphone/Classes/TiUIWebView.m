@@ -560,8 +560,10 @@ NSString * const kTitaniumJavascript = @"Ti.App={};Ti.API={};Ti.App._listeners={
 	free(base64Result);
 }
 
--(void)clearDomainCookie:(NSString *)domain
+-(void)clearDomainCookie:(NSArray *)args
 {
+	ENSURE_ARG_COUNT(args, 1);
+	NSString * domain = [args objectAtIndex:0];
 	NSLog(@"TiUIWebView::clearDomainCookie: %@", domain);
 	
     // 共通クッキーストレージを取得
