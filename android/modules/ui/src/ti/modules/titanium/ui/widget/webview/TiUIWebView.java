@@ -350,6 +350,20 @@ public class TiUIWebView extends TiUIView {
 			
 			cookieManager.setCookie(domain, "session=;");
 			cookieManager.setCookie(domain, "stamp=;");
+		} else if (domain.equals("https://twitter.com")) {
+			cookieManager.setCookie(domain, "original_referer=;");
+			cookieManager.setCookie(domain, "__utma=;");
+			cookieManager.setCookie(domain, "__utmb=;");
+			cookieManager.setCookie(domain, "__utmc=;");
+			cookieManager.setCookie(domain, "__utmv=;");
+			cookieManager.setCookie(domain, "__utmz=;");
+			cookieManager.setCookie(domain, "_twitter_sess=;");
+			cookieManager.setCookie(domain, "auth_token=;");
+			cookieManager.setCookie(domain, "guest_id=;");
+			cookieManager.setCookie(domain, "k=;");
+			cookieManager.setCookie(domain, "secure_session=;");
+			cookieManager.setCookie(domain, "twid=;");
+			cookieManager.setCookie(domain, "twll=;");
 		} else {
 //			Log.d(LCAT, "====clearDomainCookie : domain : " + domain);
 //			Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
@@ -364,9 +378,12 @@ public class TiUIWebView extends TiUIView {
 			cookieManager.setCookie(domain, "auth_token=;");
 			cookieManager.setCookie(domain, "guest_id=;");
 			cookieManager.setCookie(domain, "k=;");
+			cookieManager.setCookie(domain, "original_referer=;");
 			cookieManager.setCookie(domain, "secure_session=;");
 			cookieManager.setCookie(domain, "twid=;");
 			cookieManager.setCookie(domain, "twll=;");
+			
+//			Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
 		}
 //		Log.d(LCAT, "====clearDomainCookie : getCookie : " + cookieManager.getCookie(domain));
 	}
