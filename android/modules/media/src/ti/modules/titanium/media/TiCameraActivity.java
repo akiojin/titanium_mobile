@@ -146,8 +146,8 @@ public class TiCameraActivity extends TiBaseActivity implements SurfaceHolder.Ca
 
 	static public void hideCamera() {
 		Log.i(LCAT, "hide Camera");
-		cameraActivity.setResult(Activity.RESULT_CANCELED);
-		cameraActivity.finish();
+		//’P‚Ébackƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚Æ‚¢‚¤‚±‚Æ‚É‚·‚é
+		cameraActivity.onBackPressed();
 	}
 
 	// support user defined callback for this in the future?
