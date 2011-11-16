@@ -154,7 +154,7 @@
 	if (view!=nil)
 	{
 		TiUIView *childView = [(TiViewProxy *)arg view];
-		BOOL layoutNeedsRearranging = !TiLayoutRuleIsAbsolute(layoutProperties.layout);
+		BOOL layoutNeedsRearranging = !TiLayoutRuleIsAbsolute(layoutProperties.layoutStyle);
 		if ([NSThread isMainThread])
 		{
 			[childView removeFromSuperview];
@@ -168,7 +168,7 @@
 			[childView performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
 			if (layoutNeedsRearranging)
 			{
-				[self performSelectorOnMainThread:@selector(layout) withObject:nil waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+				[self performSelectorOnMainThread:@selector(relayout) withObject:nil waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
 			}
 		}
 	}
@@ -218,7 +218,7 @@ LAYOUTPROPERTIES_SETTER(setRight,right,TiDimensionFromObject,[self willChangePos
 LAYOUTPROPERTIES_SETTER(setWidth,width,TiDimensionFromObject,[self willChangeSize])
 LAYOUTPROPERTIES_SETTER(setHeight,height,TiDimensionFromObject,[self willChangeSize])
 
-LAYOUTPROPERTIES_SETTER(setLayout,layout,TiLayoutRuleFromObject,[self willChangeLayout])
+LAYOUTPROPERTIES_SETTER(setLayout,layoutStyle,TiLayoutRuleFromObject,[self willChangeLayout])
 
 LAYOUTPROPERTIES_SETTER(setMinWidth,minimumWidth,TiFixedValueRuleFromObject,[self willChangeSize])
 LAYOUTPROPERTIES_SETTER(setMinHeight,minimumHeight,TiFixedValueRuleFromObject,[self willChangeSize])
@@ -344,7 +344,7 @@ LAYOUTPROPERTIES_SETTER(setMinHeight,minimumHeight,TiFixedValueRuleFromObject,[s
 
 -(CGFloat)autoWidthForWidth:(CGFloat)suggestedWidth
 {
-	BOOL isHorizontal = TiLayoutRuleIsHorizontal(layoutProperties.layout);
+	BOOL isHorizontal = TiLayoutRuleIsHorizontal(layoutProperties.layoutStyle);
 	CGFloat result = 0.0;
 	
 	pthread_rwlock_rdlock(&childrenLock);
@@ -380,8 +380,8 @@ LAYOUTPROPERTIES_SETTER(setMinHeight,minimumHeight,TiFixedValueRuleFromObject,[s
 
 -(CGFloat)autoHeightForWidth:(CGFloat)width
 {
-	BOOL isVertical = TiLayoutRuleIsVertical(layoutProperties.layout);
-	BOOL isHorizontal = TiLayoutRuleIsHorizontal(layoutProperties.layout);
+	BOOL isVertical = TiLayoutRuleIsVertical(layoutProperties.layoutStyle);
+	BOOL isHorizontal = TiLayoutRuleIsHorizontal(layoutProperties.layoutStyle);
 	CGFloat result=0.0;
 
 	//Autoheight with a set autoheight for width gets complicated.
@@ -1220,7 +1220,7 @@ if(OSAtomicTestAndSetBarrier(flagBit, &dirtyflags))	\
 {
 	SET_AND_PERFORM(TiRefreshViewSize,return);
 
-	if (!TiLayoutRuleIsAbsolute(layoutProperties.layout))
+	if (!TiLayoutRuleIsAbsolute(layoutProperties.layoutStyle))
 	{
 		[self willChangeLayout];
 	}
@@ -1302,7 +1302,7 @@ if(OSAtomicTestAndSetBarrier(flagBit, &dirtyflags))	\
 	{
 		[self willChangeSize];
 	}
-	else if (!TiLayoutRuleIsAbsolute(layoutProperties.layout))
+	else if (!TiLayoutRuleIsAbsolute(layoutProperties.layoutStyle))
 	{//Since changing size already does this, we only need to check
 	//Layout if the changeSize didn't
 		[self willChangeLayout];
@@ -1411,7 +1411,7 @@ if(OSAtomicTestAndSetBarrier(flagBit, &dirtyflags))	\
 	if(OSAtomicTestAndClearBarrier(TiRefreshViewSize, &dirtyflags))
 	{
 		[self refreshSize];
-		if(TiLayoutRuleIsAbsolute(layoutProperties.layout))
+		if(TiLayoutRuleIsAbsolute(layoutProperties.layoutStyle))
 		{
 			pthread_rwlock_rdlock(&childrenLock);
 			for (TiViewProxy * thisChild in children)
@@ -1613,7 +1613,7 @@ if(OSAtomicTestAndSetBarrier(flagBit, &dirtyflags))	\
 
 	ENSURE_VALUE_CONSISTENCY(containsChild,YES);
 
-	if (!TiLayoutRuleIsAbsolute(layoutProperties.layout))
+	if (!TiLayoutRuleIsAbsolute(layoutProperties.layoutStyle))
 	{
 		BOOL alreadySet = OSAtomicTestAndSetBarrier(NEEDS_LAYOUT_CHILDREN, &dirtyflags);
 		if (!alreadySet)
@@ -1663,13 +1663,13 @@ if(OSAtomicTestAndSetBarrier(flagBit, &dirtyflags))	\
 	
 	// layout out ourself
 
-	if(TiLayoutRuleIsVertical(layoutProperties.layout))
+	if(TiLayoutRuleIsVertical(layoutProperties.layoutStyle))
 	{
 		bounds.origin.y += verticalLayoutBoundary;
 		bounds.size.height = [child minimumParentHeightForWidth:bounds.size.width];
 		verticalLayoutBoundary += bounds.size.height;
 	}
-	else if(TiLayoutRuleIsHorizontal(layoutProperties.layout))
+	else if(TiLayoutRuleIsHorizontal(layoutProperties.layoutStyle))
 	{
 		CGFloat desiredWidth = [child minimumParentWidthForWidth:bounds.size.width-horizontalLayoutBoundary];
 		if ((horizontalLayoutBoundary + desiredWidth) > bounds.size.width) //No room! Start over!
