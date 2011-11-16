@@ -105,7 +105,7 @@ enum
 -(void)setRight:(id)value;
 -(void)setWidth:(id)value;
 -(void)setHeight:(id)value;
--(void)setLayout:(id)value;
+//-(void)setLayout:(id)value;
 -(void)setMinWidth:(id)value;
 -(void)setMinHeight:(id)value;
 
