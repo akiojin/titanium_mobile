@@ -31,10 +31,10 @@
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_0
 	#define CAMERA_TRANSFORM_Y 1.23
-	#define CAMERA_TRANSFORM_X 1
+	#define CAMERA_TRANSFORM_X 1.23
 #else
 	#define CAMERA_TRANSFORM_X 1.2
-	#define CAMERA_TRANSFORM_Y 1.12412
+	#define CAMERA_TRANSFORM_Y 1.2
 #endif
 
 enum  
@@ -1093,9 +1093,18 @@ if (![TiUtils isIOS4OrGreater]) { \
 		}
 		else
 		{
-			UIImage *image = (editedImage != nil)?editedImage:
-					[editingInfo objectForKey:UIImagePickerControllerOriginalImage];
-			media = [[[TiBlob alloc] initWithImage:image] autorelease];
+            NSLog(@"[INFO] imagePickerController: Use edited image.");
+            UIImage *image = [editingInfo objectForKey:UIImagePickerControllerOriginalImage];
+            // 画像縮小
+            UIGraphicsBeginImageContext(CGSizeMake(388, 520));
+            [image drawInRect:CGRectMake(0, 0, 388, 520)];
+            UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            // トリミング
+            CGRect rect = CGRectMake(34, 40, 320, 480);
+            CGImageRef cgImage = CGImageCreateWithImageInRect(newImage.CGImage, rect);
+            newImage = [UIImage imageWithCGImage:cgImage];
+            media = [[[TiBlob alloc] initWithImage:newImage] autorelease];
 			if (saveToRoll)
 			{
 				UIImageWriteToSavedPhotosAlbum(image, nil, nil, NULL);
