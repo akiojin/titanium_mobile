@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.CookieManager;
+import android.webkit.WebSettings.PluginState; 
 
 public class TiUIWebView extends TiUIView {
 
@@ -64,11 +65,12 @@ public class TiUIWebView extends TiUIView {
 
 		WebSettings settings = webView.getSettings();
 		settings.setJavaScriptEnabled(true);
-		settings.setSupportMultipleWindows(true);
+		settings.setSupportMultipleWindows(false);
 		settings.setJavaScriptCanOpenWindowsAutomatically(true);
 		settings.setSupportZoom(true);
 		settings.setLoadsImagesAutomatically(true);
 		settings.setLightTouchEnabled(true);
+		settings.setPluginState(PluginState.ON);
 
 		webView.setWebChromeClient(new TiWebChromeClient(this));
 		client = new TiWebViewClient(this, webView);
